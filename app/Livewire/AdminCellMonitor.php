@@ -34,12 +34,33 @@ class AdminCellMonitor extends Component
     {
         $viewDateObj = Carbon::parse($this->viewDate, 'Europe/Moscow')->startOfDay();
         $endOfDay = $viewDateObj->copy()->endOfDay();
+        $now = now('Europe/Moscow');
 
         $cells = Cell::with(['bookings' => function($query) use ($viewDateObj, $endOfDay) {
             $query->where('started_at', '<=', $endOfDay)
                 ->where('expires_at', '>=', $viewDateObj)
-                ->with('user'); // ← Явно загружаем пользователя
+                ->where('status', '!=', 'cancelled') // ❗ Исключаем отменённые на уровне БД
+                ->with('user');
         }])->get();
+
+        $cells->each(function($cell) use ($now) {
+            $cell->bookings->each(function($booking) use ($now) {
+                $start = $booking->started_at->timezone('Europe/Moscow');
+                $end = $booking->expires_at->timezone('Europe/Moscow');
+
+                // ❗ cancelled больше не придёт, но оставляем защиту
+                if ($booking->status === 'completed') {
+                    $booking->display_status = 'completed';
+                } elseif ($end->isPast()) {
+                    $booking->display_status = 'completed';
+                    $booking->is_auto_completed = true;
+                } elseif ($start->isFuture()) {
+                    $booking->display_status = 'pending';
+                } else {
+                    $booking->display_status = 'active';
+                }
+            });
+        });
 
         return view('livewire.admin-cell-monitor', [
             'cells' => $cells,

@@ -39,8 +39,6 @@
                             class="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-lg shadow-blue-500/30"></span>Активно</span>
                     <span class="flex items-center gap-1"><span
                             class="w-2.5 h-2.5 rounded-full bg-green-500 shadow-lg shadow-green-500/30"></span>Завершено</span>
-                    <span class="flex items-center gap-1"><span
-                            class="w-2.5 h-2.5 rounded-full bg-red-500 shadow-lg shadow-red-500/30"></span>Отменено</span>
                 </div>
                 <button wire:click="setToday"
                         class="px-5 py-2.5 text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
@@ -127,6 +125,7 @@
                                 @php
                                     $start = \Carbon\Carbon::parse($booking->started_at)->setTimezone('Europe/Moscow');
                                     $end   = \Carbon\Carbon::parse($booking->expires_at)->setTimezone('Europe/Moscow');
+                                    $now   = \Carbon\Carbon::now('Europe/Moscow');
 
                                     if ($start->gt($dayEnd) || $end->lt($dayStart)) continue;
 
@@ -137,10 +136,23 @@
                                     $left  = max(0, ($dayStart->diffInSeconds($drawStart) / $total) * 100);
                                     $width = max(0.6, ($drawStart->diffInSeconds($drawEnd) / $total) * 100);
 
-                                    $statusStyles = match($booking->status) {
+                                    // 🎯 Вычисляем отображаемый статус по времени + статусу из БД
+                                    $displayStatus = match($booking->status) {
+                                        'cancelled' => 'cancelled',
+                                        'completed' => 'completed',
+                                        'active' => $end->isPast() ? 'completed' : 'active',
+                                        'pending' => $start->isFuture() ? 'pending' : 'active',
+                                        default => 'active',
+                                    };
+
+                                    // Флаг: авто-завершено (визуально, но в БД ещё active)
+                                    $isAutoCompleted = ($booking->status === 'active' && $end->isPast());
+
+                                    $statusStyles = match($displayStatus) {
                                         'active'    => ['bg' => 'from-blue-500/90 to-blue-600/90', 'border' => 'border-blue-400/50', 'glow' => 'shadow-blue-500/30', 'text' => 'text-blue-50'],
                                         'completed' => ['bg' => 'from-emerald-500/90 to-green-600/90', 'border' => 'border-emerald-400/50', 'glow' => 'shadow-emerald-500/30', 'text' => 'text-emerald-50'],
                                         'cancelled' => ['bg' => 'from-rose-500/90 to-red-600/90', 'border' => 'border-rose-400/50', 'glow' => 'shadow-rose-500/30', 'text' => 'text-rose-50'],
+                                        'pending'   => ['bg' => 'from-amber-500/90 to-orange-600/90', 'border' => 'border-amber-400/50', 'glow' => 'shadow-amber-500/30', 'text' => 'text-amber-50'],
                                         default     => ['bg' => 'from-slate-500/80 to-slate-600/80', 'border' => 'border-slate-400/40', 'glow' => 'shadow-slate-500/20', 'text' => 'text-slate-100'],
                                     };
 

@@ -15,7 +15,17 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     @livewireStyles
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
 
+    <!-- Lucide icons (если ещё не подключены) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+    </script>
     <!-- Глобальные стили для полноэкранного режима -->
     <style>
         html, body {

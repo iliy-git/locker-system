@@ -7,7 +7,7 @@ use Carbon\Carbon;
 
 class Booking extends Model
 {
-    protected $fillable = ['user_id', 'cell_id', 'started_at', 'expires_at', 'status', 'pincode', 'finished_at'];
+    protected $fillable = ['user_id', 'cell_id', 'started_at', 'expires_at', 'status', 'pincode', 'finished_at', 'total_price', 'used_minutes'];
 
     protected $casts = [
         'started_at' => 'datetime',
@@ -28,5 +28,34 @@ class Booking extends Model
         $hours = $hours < 1 ? 1 : ceil($hours);
 
         return $hours * $this->cell->cost;
+    }
+    public function calculatePrice(): int
+    {
+        if ($this->status === 'cancelled' || $this->status === 'pending') {
+            return 0;
+        }
+
+        $start = $this->started_at ?? now();
+        $end = $this->finished_at ?? now();
+
+        $minutes = max(60, $start->diffInMinutes($end, false));
+        $hours = ceil($minutes / 60);
+
+        return $this->cell->cost * $hours;
+    }
+
+    public function getDisplayStatusAttribute(): array
+    {
+        $now = now('Europe/Moscow');
+
+        return match($this->status) {
+            'pending' => $this->started_at?->isFuture()
+                ? ['label' => 'Ожидает', 'color' => 'amber', 'icon' => 'clock']
+                : ['label' => 'Активна', 'color' => 'emerald', 'icon' => 'key'],
+            'active' => ['label' => 'Активна', 'color' => 'emerald', 'icon' => 'key'],
+            'completed' => ['label' => 'Завершена', 'color' => 'slate', 'icon' => 'check'],
+            'cancelled' => ['label' => 'Отменена', 'color' => 'rose', 'icon' => 'x'],
+            default => ['label' => 'Неизвестно', 'color' => 'slate', 'icon' => 'help-circle'],
+        };
     }
 }
