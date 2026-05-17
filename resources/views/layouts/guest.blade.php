@@ -54,7 +54,7 @@
         @if(request()->routeIs('login') || request()->routeIs('register') || request()->routeIs('password.request'))
 
             <div class="w-full flex flex-col items-center justify-center">
-                <div class="w-full sm:max-w-md px-8  bg-[#1e293b] border border-slate-800 rounded-[2.5rem] shadow-2xl relative z-10">
+                <div class="w-full sm:max-w-md  bg-[#1e293b] border border-slate-800 rounded-[2.5rem] shadow-2xl relative z-10">
                     {{ $slot }}
                 </div>
             </div>
