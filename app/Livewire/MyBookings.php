@@ -81,29 +81,23 @@ class MyBookings extends Component
             ->latest()
             ->get();
 
-        // 📊 Фильтрация: убираем «мёртвые» брони из отображения
         $bookings = $bookings->filter(function($booking) use ($now) {
             if ($booking->status === 'active' && $booking->expires_at->isPast()) return false;
             if ($booking->status === 'pending' && $booking->started_at->isPast()) return false;
             return true;
         })->map(function($booking) use ($now) {
-            // 🎯 ПРИОРИТЕТ: сначала проверяем статус, потом время!
 
-            // ❗ Завершённые и отменённые — всегда остаются собой
             if ($booking->status === 'completed') {
                 $booking->display_state = 'completed';
             } elseif ($booking->status === 'cancelled') {
                 $booking->display_state = 'cancelled';
             }
-            // Если время ещё не наступило → pending
             elseif ($booking->started_at->isFuture()) {
                 $booking->display_state = 'pending';
             }
-            // Если время вышло → active
             elseif ($booking->started_at->isPast() && $booking->expires_at->isFuture()) {
                 $booking->display_state = 'active';
             }
-            // Иначе → используем статус из базы
             else {
                 $booking->display_state = $booking->status;
             }
@@ -111,7 +105,6 @@ class MyBookings extends Component
             return $booking;
         });
 
-        // 📈 Статистика: считаем только активные и ожидающие (не completed/cancelled!)
         $stats = [
             'active_count' => $bookings->where('display_state', 'active')->count(),
             'pending_count' => $bookings->where('display_state', 'pending')->count(),

@@ -136,13 +136,11 @@ class LockerDisplay extends Component
             'd' => $cells->max('depth'),
         ];
 
-        // Если все ячейки одинакового размера → показываем точно
         $isUniform = $min['w'] === $max['w'] && $min['h'] === $max['h'] && $min['d'] === $max['d'];
 
         if ($isUniform) {
             $display = "{$min['w']} × {$min['h']} × {$min['d']} см";
         } else {
-            // Показываем диапазон: "от 30×20×50 до 40×30×60 см"
             $display = "от {$min['w']}×{$min['h']}×{$min['d']} до {$max['w']}×{$max['h']}×{$max['d']} см";
         }
 

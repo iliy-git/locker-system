@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-[#0b0f19] text-slate-300 p-4 md:p-6 font-sans antialiased">
+<div class="min-h-screen text-slate-300 font-sans antialiased">
 
     <!-- HEADER WITH CONTROLS -->
     <div class="max-w-6xl mx-auto mb-6">

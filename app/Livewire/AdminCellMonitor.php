@@ -39,7 +39,7 @@ class AdminCellMonitor extends Component
         $cells = Cell::with(['bookings' => function($query) use ($viewDateObj, $endOfDay) {
             $query->where('started_at', '<=', $endOfDay)
                 ->where('expires_at', '>=', $viewDateObj)
-                ->where('status', '!=', 'cancelled') // ❗ Исключаем отменённые на уровне БД
+                ->where('status', '!=', 'cancelled')
                 ->with('user');
         }])->get();
 
@@ -48,7 +48,6 @@ class AdminCellMonitor extends Component
                 $start = $booking->started_at->timezone('Europe/Moscow');
                 $end = $booking->expires_at->timezone('Europe/Moscow');
 
-                // ❗ cancelled больше не придёт, но оставляем защиту
                 if ($booking->status === 'completed') {
                     $booking->display_status = 'completed';
                 } elseif ($end->isPast()) {
