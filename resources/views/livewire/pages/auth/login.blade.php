@@ -47,7 +47,7 @@ new #[Layout('layouts.guest')] class extends Component
         <div>
             <label for="email" class="block text-[11px] uppercase tracking-wider font-bold text-slate-400 mb-2">Электронная почта</label>
             <input wire:model="form.email" id="email"
-                   class="block w-full px-4 py-3.5 bg-[#0f172a]/60 border border-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-xl font-mono text-sm text-black placeholder-slate-500 transition-all outline-none"
+                   class="block w-full bg-white px-4 py-3.5 border border-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-xl font-mono text-sm text-black placeholder-slate-500 transition-all outline-none"
                    type="email" name="email" placeholder="example@domain.com" required autofocus autocomplete="username" />
             @if($errors->has('form.email'))
                 <p class="text-xs text-rose-400 mt-2 font-medium flex items-center gap-1">
@@ -66,7 +66,7 @@ new #[Layout('layouts.guest')] class extends Component
                 @endif
             </div>
             <input wire:model="form.password" id="password"
-                   class="block w-full px-4 py-3.5 bg-[#0f172a]/60 border border-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-xl font-mono text-sm text-black placeholder-slate-500 transition-all outline-none"
+                   class="block w-full px-4 py-3.5 bg-white border border-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-xl font-mono text-sm text-black placeholder-slate-500 transition-all outline-none"
                    type="password" name="password" placeholder="••••••••" required autocomplete="current-password" />
             @if($errors->has('form.password'))
                 <p class="text-xs text-rose-400 mt-2 font-medium flex items-center gap-1">

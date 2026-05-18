@@ -84,6 +84,7 @@ class LockerDisplay extends Component
             'expires_at' => Carbon::parse($this->endTime),
             'status' => 'active',
             'pincode' => rand(1000, 9999),
+            'total_price' => $this->totalPrice(),
         ]);
 
         return redirect()->route('dashboard', ['view' => 'my-cells']);
@@ -153,7 +154,61 @@ class LockerDisplay extends Component
             'volume_max' => $max['w'] * $max['h'] * $max['d'] / 1000,
         ];
     }
+    /**
+     * Получить стоимость часа для выбранного типа (берём cost из первой активной ячейки этого типа)
+     */
+    private function getHourlyRate($type)
+    {
+        return Cell::where('type', $type)
+            ->where('status', 'active')
+            ->value('cost') ?? 0;
+    }
 
+    /**
+     * Количество часов (округление вверх)
+     */
+    public function getHoursCountAttribute()
+    {
+        if (!$this->startTime || !$this->endTime) {
+            return 0;
+        }
+
+        $start = \Carbon\Carbon::parse($this->startTime);
+        $end = \Carbon\Carbon::parse($this->endTime);
+
+        return (int) ceil($start->diffInMinutes($end) / 60);
+    }
+
+    /**
+     * Итоговая стоимость: цена ячейки × часы
+     */
+    public function getTotalPriceAttribute()
+    {
+        if (!$this->selectedType) {
+            return 0;
+        }
+
+        return $this->getHourlyRate($this->selectedType) * $this->hoursCount;
+    }
+    public function hoursCount()
+    {
+        if (!$this->startTime || !$this->endTime) {
+            return 0;
+        }
+
+        $start = \Carbon\Carbon::parse($this->startTime);
+        $end = \Carbon\Carbon::parse($this->endTime);
+
+        return (int) ceil($start->diffInMinutes($end) / 60);
+    }
+    public function totalPrice()
+    {
+        if (!$this->selectedType) {
+            return 0;
+        }
+
+        return $this->getHourlyRate($this->selectedType) * $this->hoursCount();
+    }
     public function render()
     {
         return view('livewire.locker-display');

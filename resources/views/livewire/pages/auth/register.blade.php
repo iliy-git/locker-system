@@ -65,7 +65,7 @@ new #[Layout('layouts.guest')] class extends Component
         <div>
             <label for="email" class="block text-[11px] uppercase tracking-wider font-bold text-slate-400 mb-1.5">Электронная почта</label>
             <input wire:model="email" id="email" type="email" required autocomplete="username"
-                   class="block w-full px-4 py-3 bg-[#0f172a]/60 border border-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-xl font-mono text-sm text-black placeholder-slate-500 transition-all outline-none"
+                   class="block w-full px-4 py-3 bg-white border border-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-xl font-mono text-sm text-black placeholder-slate-500 transition-all outline-none"
                    placeholder="example@domain.com" />
             @if($errors->has('email'))
                 <p class="text-xs text-rose-400 mt-1.5 font-medium flex items-center gap-1">
@@ -77,7 +77,7 @@ new #[Layout('layouts.guest')] class extends Component
         <div>
             <label for="password" class="block text-[11px] uppercase tracking-wider font-bold text-slate-400 mb-1.5">Пароль</label>
             <input wire:model="password" id="password" type="password" required autocomplete="new-password"
-                   class="block w-full px-4 py-3 bg-[#0f172a]/60 border border-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-xl font-mono text-sm text-black placeholder-slate-500 transition-all outline-none"
+                   class="block w-full px-4 py-3 bg-white border border-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-xl font-mono text-sm text-black placeholder-slate-500 transition-all outline-none"
                    placeholder="••••••••" />
             @if($errors->has('password'))
                 <p class="text-xs text-rose-400 mt-1.5 font-medium flex items-center gap-1">
@@ -89,7 +89,7 @@ new #[Layout('layouts.guest')] class extends Component
         <div>
             <label for="password_confirmation" class="block text-[11px] uppercase tracking-wider font-bold text-slate-400 mb-1.5">Подтвердите пароль</label>
             <input wire:model="password_confirmation" id="password_confirmation" type="password" required autocomplete="new-password"
-                   class="block w-full px-4 py-3 bg-[#0f172a]/60 border border-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-xl font-mono text-sm text-black placeholder-slate-500 transition-all outline-none"
+                   class="block w-full px-4 py-3 bg-white border border-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-xl font-mono text-sm text-black placeholder-slate-500 transition-all outline-none"
                    placeholder="••••••••" />
         </div>
 

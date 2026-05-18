@@ -205,6 +205,14 @@
                         {{ $endTime ? \Carbon\Carbon::parse($endTime)->format('H:i') : '--:--' }}
                     </span>
                 </div>
+                <div class="flex justify-between pt-3 border-t border-slate-800">
+                    <span class="text-slate-500 text-[10px] font-bold uppercase">Длительность</span>
+                    <span class="text-white font-mono">{{ $this->hoursCount() }} ч.</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-500 text-[10px] font-bold uppercase">Итого</span>
+                    <span class="text-emerald-400 font-black text-lg">{{ number_format($this->totalPrice(), 0, '.', ' ') }} ₽</span>
+                </div>
             </div>
 
             <button wire:click="confirmBooking" wire:loading.attr="disabled"

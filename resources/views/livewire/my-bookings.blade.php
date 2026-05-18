@@ -34,9 +34,14 @@
             $isWaiting = $start->isFuture() && !$isCancelled && !$isCompleted;
             $isActive = $start->isPast() && $end->isFuture() && !$isCancelled && !$isCompleted;
 
-            $currentPrice = $booking->total_price > 0
-                ? $booking->total_price
-                : ($isActive ? $booking->calculatePrice() : 0);
+            $displayPrice = $booking->total_price > 0 ? $booking->total_price : 0;
+
+            $confirmPrice = 0;
+            if ($isActive) {
+                $usedMinutes = $start->diffInMinutes($now, false);
+                $hours = (int) ceil($usedMinutes / 60);
+                $confirmPrice = $hours * $booking->cell->cost;
+            }
         @endphp
 
         <div class="relative overflow-hidden bg-[#1e293b]/50 border border-slate-800 rounded-[2rem] p-6 flex justify-between items-center shadow-2xl transition-all hover:border-slate-700"
@@ -97,11 +102,11 @@
                             </span>
                         @endif
 
-                        @if($currentPrice > 0)
-                            <span class="text-emerald-400 font-bold text-sm">
-                                {{ number_format($currentPrice, 0, '.', ' ') }} ₽
-                            </span>
-                        @endif
+                            @if($displayPrice > 0)
+                                <span class="text-emerald-400 font-bold text-sm">
+                                    {{ number_format($displayPrice, 0, '.', ' ') }} ₽
+                                </span>
+                            @endif
                     </div>
                 </div>
             </div>
@@ -116,13 +121,13 @@
                     </button>
                 @endif
 
-                @if($isActive)
-                    <button wire:click="release({{ $booking->id }})"
-                            wire:confirm="Завершить аренду? Стоимость: {{ $currentPrice }} ₽"
-                            class="px-5 py-2.5 text-xs font-bold uppercase tracking-wider bg-rose-500 hover:bg-rose-600 text-white rounded-xl transition-all shadow-lg shadow-rose-500/20">
-                        Завершить
-                    </button>
-                @endif
+                    @if($isActive)
+                        <button wire:click="release({{ $booking->id }})"
+                                wire:confirm="Завершить аренду? Стоимость: {{ $confirmPrice }} ₽"
+                                class="px-5 py-2.5 text-xs font-bold uppercase tracking-wider bg-rose-500 hover:bg-rose-600 text-white rounded-xl transition-all shadow-lg shadow-rose-500/20">
+                            Завершить
+                        </button>
+                    @endif
 
                 @if($isCompleted)
                     <span class="px-4 py-2 text-xs font-bold text-slate-500 uppercase bg-slate-800/50 rounded-xl flex items-center gap-2">
